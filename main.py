@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-
+import random
 pygame.init()
 
 #colocando o tamanho da tela e o framerate
@@ -19,6 +19,11 @@ ground_scroll = 0
 scroll_spd = 2
 voar = False
 game_over = False
+pipe_gap = 150
+pipe_frequence = 1500 #milisegundos
+last_pipe = pygame.time.get_ticks() - pipe_frequence
+
+
 
 #titulo
 pygame.display.set_caption('Alex Bird')
@@ -85,12 +90,30 @@ class Bird(pygame.sprite.Sprite):
         else:
             self.image = pygame.transform.rotate(self.images[self.index], -90)
 
-#Criando o obj passaro e colocando ele no game cm os sprites
+class Obstaculo(pygame.sprite.Sprite):
+    def __init__(self, x , y , position):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('img/tubulacao.png')
+        self.rect = self.image.get_rect()
+        # 1 for top and -1 for bottom
+        if position == 1:
+            self.image = pygame.transform.flip(self.image, False, True)
+            self.rect.bottomleft = [x, y - int(pipe_gap / 2)]
+        if position == -1:
+            self.rect.topleft = [x , y + int(pipe_gap /
+                                             2)]
+    def update(self):
+        self.rect.x -= scroll_spd
+        if self.rect.right < 50:
+            self.kill()
+
+#Criando o obj passaro e obstaculo colocando ele no game cm os sprites
 bird_group = pygame.sprite.Group()
+obstaculo_group = pygame.sprite.Group()
 
 alex = Bird(100,int(screen_height / 2))
-
 bird_group.add(alex)
+
 
 
 #colocando loop pra rodar o jogo
@@ -103,25 +126,47 @@ while run:
     #carregando background
     screen.blit(bg , (0,0))
 
-    #desenhando o passaro na tela
+    #desenhando na tela
     bird_group.draw(screen)
     bird_group.update()
 
+    obstaculo_group.draw(screen)
+
+
     # colocando o ground
     screen.blit(ground, (ground_scroll, 512))
+
+    #procurando colisão
+    if pygame.sprite.groupcollide(bird_group, obstaculo_group, False, False) or alex.rect.top < 0:
+        game_over = True
 
     #chegar c o passaro acerto o chão
     if alex.rect.bottom > 512:
         game_over = True
         voar = False
 
-    #criando a sensação de movimento
-    if game_over == False:
+    #Atualização do jogo
+    if game_over == False and voar == True:
+
+        #gerando novos obstaculos
+        pipe_hight = random.randint(-100, 100)
+        time_now = pygame.time.get_ticks()
+        if time_now - last_pipe > pipe_frequence:
+            top_pipe = Obstaculo(screen_width, int(screen_height / 2) + pipe_hight, 1)
+            btm_pipe = Obstaculo(screen_width, int(screen_height / 2) + pipe_hight, -1)
+
+            obstaculo_group.add(btm_pipe)
+            obstaculo_group.add(top_pipe)
+
+            last_pipe = time_now
+
         ground_scroll -= scroll_spd
 
         #fazendo o loop do background
         if abs(ground_scroll) > 45:
             ground_scroll = 0
+
+        obstaculo_group.update()
 
     #for para analisar os eventos do jogo
     for event in pygame.event.get():
