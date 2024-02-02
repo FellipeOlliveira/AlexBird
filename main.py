@@ -30,7 +30,7 @@ pygame.display.set_caption('Alex Bird')
 
 #carregando imagens do background
 bg = pygame.image.load('img/bg_teste.png') #background
-ground = pygame.image.load('img/ground_teste.png') #chão(sensação de movimento)
+ground = pygame.image.load('img/ground_teste6.png') #chão(sensação de movimento)
 
 #Criando a classe Bird
 class Bird(pygame.sprite.Sprite):
@@ -163,7 +163,7 @@ while run:
         ground_scroll -= scroll_spd
 
         #fazendo o loop do background
-        if abs(ground_scroll) > 45:
+        if abs(ground_scroll) > 30:
             ground_scroll = 0
 
         obstaculo_group.update()
