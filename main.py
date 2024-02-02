@@ -9,7 +9,7 @@ clock = pygame.time.Clock()
 fps = 60
 
 screen_width =  288
-screen_height = 624
+screen_height = 772#780
 
 screen = pygame.display.set_mode((screen_width,screen_height))
 
@@ -29,8 +29,8 @@ last_pipe = pygame.time.get_ticks() - pipe_frequence
 pygame.display.set_caption('Alex Bird')
 
 #carregando imagens do background
-bg = pygame.image.load('img/bg_teste.png') #background
-ground = pygame.image.load('img/ground_teste6.png') #chão(sensação de movimento)
+bg = pygame.image.load('img/background.png') #background
+ground = pygame.image.load('img/ground.png') #chão(sensação de movimento)
 
 #Criando a classe Bird
 class Bird(pygame.sprite.Sprite):
@@ -62,7 +62,7 @@ class Bird(pygame.sprite.Sprite):
             if self.spd > 8:
                 self.spd = 8
             #print(self.spd)
-            if self.rect.bottom < 512:
+            if self.rect.bottom < 640:
                 self.rect.y += int(self.spd)
 
         if game_over == False:
@@ -100,8 +100,7 @@ class Obstaculo(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, False, True)
             self.rect.bottomleft = [x, y - int(pipe_gap / 2)]
         if position == -1:
-            self.rect.topleft = [x , y + int(pipe_gap /
-                                             2)]
+            self.rect.topleft = [x , y + int(pipe_gap / 2)]
     def update(self):
         self.rect.x -= scroll_spd
         if self.rect.right < 50:
@@ -134,14 +133,14 @@ while run:
 
 
     # colocando o ground
-    screen.blit(ground, (ground_scroll, 512))
+    screen.blit(ground, (ground_scroll, 632))
 
     #procurando colisão
     if pygame.sprite.groupcollide(bird_group, obstaculo_group, False, False) or alex.rect.top < 0:
         game_over = True
 
     #chegar c o passaro acerto o chão
-    if alex.rect.bottom > 512:
+    if alex.rect.bottom > 640:
         game_over = True
         voar = False
 
