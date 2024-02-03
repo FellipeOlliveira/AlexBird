@@ -44,7 +44,7 @@ class Bird(pygame.sprite.Sprite):
 
         #carregando as imagens
         for i in range(1,4):
-            img = pygame.image.load(f'img/bluebird{i}.png')
+            img = pygame.image.load(f'img/Alex{i}.png')
             self.images.append(img)
 
         #pegando so a imagem do momento
@@ -133,7 +133,7 @@ while run:
 
 
     # colocando o ground
-    screen.blit(ground, (ground_scroll, 632))
+    screen.blit(ground, (ground_scroll, 630))
 
     #procurando colisão
     if pygame.sprite.groupcollide(bird_group, obstaculo_group, False, False) or alex.rect.top < 0:
