@@ -9,7 +9,7 @@ clock = pygame.time.Clock()
 fps = 60
 
 screen_width =  288
-screen_height = 772#780
+screen_height = 652
 
 screen = pygame.display.set_mode((screen_width,screen_height))
 
@@ -93,7 +93,7 @@ class Bird(pygame.sprite.Sprite):
 class Obstaculo(pygame.sprite.Sprite):
     def __init__(self, x , y , position):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('img/tubulacao.png')
+        self.image = pygame.image.load('img/tubulacaoObstaculo.png')
         self.rect = self.image.get_rect()
         # 1 for top and -1 for bottom
         if position == 1:
@@ -133,14 +133,14 @@ while run:
 
 
     # colocando o ground
-    screen.blit(ground, (ground_scroll, 630))
+    screen.blit(ground, (ground_scroll, 512))
 
     #procurando colisão
     if pygame.sprite.groupcollide(bird_group, obstaculo_group, False, False) or alex.rect.top < 0:
         game_over = True
 
     #chegar c o passaro acerto o chão
-    if alex.rect.bottom > 640:
+    if alex.rect.bottom > 508:
         game_over = True
         voar = False
 
@@ -148,7 +148,7 @@ while run:
     if game_over == False and voar == True:
 
         #gerando novos obstaculos
-        pipe_hight = random.randint(-100, 100)
+        pipe_hight = random.randint(-80, 80)
         time_now = pygame.time.get_ticks()
         if time_now - last_pipe > pipe_frequence:
             top_pipe = Obstaculo(screen_width, int(screen_height / 2) + pipe_hight, 1)
