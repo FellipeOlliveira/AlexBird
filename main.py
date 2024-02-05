@@ -22,15 +22,18 @@ game_over = False
 pipe_gap = 150
 pipe_frequence = 1500 #milisegundos
 last_pipe = pygame.time.get_ticks() - pipe_frequence
-
+score = 0
+pass_pipe = False
 
 
 #titulo
 pygame.display.set_caption('Alex Bird')
 
 #carregando imagens do background
-bg = pygame.image.load('img/background.png') #background
+bg = pygame.image.load('img/bg_teste.png') #background
 ground = pygame.image.load('img/ground.png') #chão(sensação de movimento)
+
+
 
 #Criando a classe Bird
 class Bird(pygame.sprite.Sprite):
@@ -93,7 +96,7 @@ class Bird(pygame.sprite.Sprite):
 class Obstaculo(pygame.sprite.Sprite):
     def __init__(self, x , y , position):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('img/tubulacaoObstaculo.png')
+        self.image = pygame.image.load('img/tubulacao.png')
         self.rect = self.image.get_rect()
         # 1 for top and -1 for bottom
         if position == 1:
@@ -134,6 +137,19 @@ while run:
 
     # colocando o ground
     screen.blit(ground, (ground_scroll, 512))
+
+    #checando o score
+    if len(obstaculo_group) > 0:
+        if bird_group.sprites()[0].rect.left > obstaculo_group.sprites()[0].rect.left\
+            and bird_group.sprites()[0].rect.right < obstaculo_group.sprites()[0].rect.right\
+            and pass_pipe == False:
+            pass_pipe = True
+        if pass_pipe == True:
+            if bird_group.sprites()[0].rect.left > obstaculo_group.sprites()[0].rect.right:
+                score += 1
+                pass_pipe = False
+    #print(score)
+
 
     #procurando colisão
     if pygame.sprite.groupcollide(bird_group, obstaculo_group, False, False) or alex.rect.top < 0:
