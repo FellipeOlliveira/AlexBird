@@ -13,6 +13,11 @@ screen_height = 652
 
 screen = pygame.display.set_mode((screen_width,screen_height))
 
+#font define
+font = pygame.font.SysFont('Neon Led Light', 60)
+
+#color define
+white = (255, 255, 255)
 
 #Variaveis do jogo
 ground_scroll = 0
@@ -32,7 +37,19 @@ pygame.display.set_caption('Alex Bird')
 #carregando imagens do background
 bg = pygame.image.load('img/bg_teste.png') #background
 ground = pygame.image.load('img/ground.png') #chão(sensação de movimento)
+btn_img = pygame.image.load('img/restart.png')
 
+def desenhar_score(text,font, text_col, x , y):
+    img = font.render(text, True, text_col)
+    screen.blit(img,(x,y ))
+
+def reset_game():
+    obstaculo_group.empty()
+    alex.rect.x = 100
+    alex.rect.y = int(screen_height / 2)
+    score = 0
+
+    return score
 
 
 #Criando a classe Bird
@@ -109,9 +126,34 @@ class Obstaculo(pygame.sprite.Sprite):
         if self.rect.right < 50:
             self.kill()
 
+class Button():
+
+    def __init__(self,x ,y, image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+    def draw(self):
+
+        action = False
+
+        #pegando a posição do mouse
+        pos = pygame.mouse.get_pos()
+
+        #checando c o mouse esta emcima do botao
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1:
+                action = True
+
+        #desenhando o botao
+        screen.blit(self.image, (self.rect.x , self.rect.y))
+
+        return action
+
 #Criando o obj passaro e obstaculo colocando ele no game cm os sprites
 bird_group = pygame.sprite.Group()
 obstaculo_group = pygame.sprite.Group()
+btn = Button(screen_width // 2 - 50, screen_height // 2 - 100, btn_img)
 
 alex = Bird(100,int(screen_height / 2))
 bird_group.add(alex)
@@ -149,7 +191,7 @@ while run:
                 score += 1
                 pass_pipe = False
     #print(score)
-
+    desenhar_score(str(score), font, white, int(screen_width/2), 20)
 
     #procurando colisão
     if pygame.sprite.groupcollide(bird_group, obstaculo_group, False, False) or alex.rect.top < 0:
@@ -182,6 +224,13 @@ while run:
             ground_scroll = 0
 
         obstaculo_group.update()
+
+    #checando o gameover e resetando
+    if game_over == True:
+        if btn.draw() == True:
+            game_over = False
+            score = reset_game()
+
 
     #for para analisar os eventos do jogo
     for event in pygame.event.get():
